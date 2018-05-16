@@ -17,6 +17,14 @@ gulp.task('deleteDistFolder', function() {
     return del('./dist');
 });
 
+// ===============================================================
+// Delete Temp folder after building dist 
+// ===============================================================
+gulp.task('delTempFolder', ['deleteDistFolder', 'copyGeneralFiles', 'optimizeImage', 'usemin', 'copyCompStyles', 'copyCompScripts'], function() {
+    return del('./app/temp');
+});
+
+
 
 
 
@@ -111,7 +119,7 @@ gulp.task('copyCompScripts', ['usemin'], function() {
 
 
 // Build production files, 
-gulp.task('build', ['deleteDistFolder', 'copyGeneralFiles', 'optimizeImage', 'usemin', 'copyCompStyles', 'copyCompScripts']);
+gulp.task('build', ['deleteDistFolder', 'copyGeneralFiles', 'optimizeImage', 'usemin', 'copyCompStyles', 'copyCompScripts', 'delTempFolder']);
 
 
 
