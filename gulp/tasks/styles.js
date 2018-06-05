@@ -3,7 +3,6 @@ var gulp = require('gulp'),
     rename = require('gulp-rename'),
     sass = require('gulp-sass'),
     del = require('del'),
-    concat = require('gulp-concat'),
     merge = require('merge-stream'),
     sourcemaps = require('gulp-sourcemaps');
 
@@ -11,7 +10,7 @@ var gulp = require('gulp'),
 // ======================================================================================
 // Compile and automatically prefix stylesheets and rename main.css to style.css
 // ======================================================================================
-gulp.task('sass', ['copyNodeCss'], function() {
+gulp.task('sass', function() {
 
 
     const AUTOPREFIXER_BROWSERS = [
@@ -26,28 +25,17 @@ gulp.task('sass', ['copyNodeCss'], function() {
         'bb >= 10'
     ];
 
-    let sassStream,
-        cssStream;
 
-    //compile sass
-    sassStream = gulp.src('./app/assets/styles/styles.scss')
+
+    return gulp.src('./app/assets/styles/styles.scss')
         .pipe(sourcemaps.init())
         .pipe(sass({
             includePaths: ['node_modules']
         }).on('error', sass.logError))
         .pipe(autoprefixer(AUTOPREFIXER_BROWSERS))
-        .pipe(sourcemaps.write())
+        .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest('./app/temp/styles/'));
 
-    //select additional css files
-    cssStream = gulp.src(['./app/temp/styles/*.css', '!./app/temp/styles/styles.css']);
 
-
-    //merge the two streams and concatenate their contents into a single file
-    return merge(sassStream, cssStream)
-        .pipe(sourcemaps.init())
-        .pipe(concat('styles.css'))
-        .pipe(sourcemaps.write())
-        .pipe(gulp.dest('./app/temp/styles/'));
 
 });

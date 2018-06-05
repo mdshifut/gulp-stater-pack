@@ -3,6 +3,7 @@ var gulp = require('gulp'),
     del = require('del'),
     usemin = require('gulp-usemin'),
     image = require('gulp-image'),
+    // concat = require('gulp-concat'),
     rev = require('gulp-rev'),
     cssnano = require('gulp-cssnano'),
     uglify = require('gulp-uglify'),
@@ -20,7 +21,7 @@ gulp.task('deleteDistFolder', function() {
 // ===============================================================
 // Delete Temp folder after building dist 
 // ===============================================================
-gulp.task('delTempFolder', ['deleteDistFolder', 'copyGeneralFiles', 'optimizeImage', 'usemin', 'copyCompStyles', 'copyCompScripts'], function() {
+gulp.task('delTempFolder', ['deleteDistFolder', 'copyGeneralFiles', 'optimizeImage', 'usemin'], function() {
     return del('./app/temp');
 });
 
@@ -29,7 +30,7 @@ gulp.task('delTempFolder', ['deleteDistFolder', 'copyGeneralFiles', 'optimizeIma
 
 
 // =================================================================
-// Delete dist folder
+// Delete Docs folder
 // =================================================================
 gulp.task('deleteDocsFolder', function() {
     return del('./docs');
@@ -81,8 +82,8 @@ gulp.task('optimizeImage', ['deleteDistFolder'], function() {
 gulp.task('usemin', ['deleteDistFolder', 'sass', 'scripts'], function() {
     return gulp.src('./app/*.html')
         .pipe(usemin({
-            css: [function() {
-                return rev()
+            css: ['concat', function() {
+                return rev();
             }, function() {
                 return cssnano();
             }],
@@ -98,28 +99,15 @@ gulp.task('usemin', ['deleteDistFolder', 'sass', 'scripts'], function() {
 });
 
 
-// ============================================================================
-// Copy  styles file to production folder
-// ============================================================================
-gulp.task('copyCompStyles', ['usemin'], function() {
 
-    return gulp.src("./app/temp/styles/styles.css")
-        .pipe(gulp.dest("./dist/assets/styles"));
-});
+
+
 
 
 // =============================================================================
-// Copy  scripts file to production folder
+// Build distribution files
 // =============================================================================
-gulp.task('copyCompScripts', ['usemin'], function() {
-
-    return gulp.src("./app/temp/scripts/*.js")
-        .pipe(gulp.dest("./dist/assets/scripts"));
-});
-
-
-// Build production files, 
-gulp.task('build', ['deleteDistFolder', 'copyGeneralFiles', 'optimizeImage', 'usemin', 'copyCompStyles', 'copyCompScripts', 'delTempFolder']);
+gulp.task('build', ['deleteDistFolder', 'optimizeImage', 'copyGeneralFiles', 'usemin', 'delTempFolder']);
 
 
 

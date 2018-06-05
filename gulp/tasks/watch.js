@@ -1,6 +1,7 @@
 'use strict';
 var gulp = require('gulp'),
     del = require('del'),
+    watch = require('gulp-watch'),
     runSequence = require('run-sequence'),
     browserSync = require('browser-sync').create();
 
@@ -21,17 +22,25 @@ gulp.task('watch', function() {
     });
 
 
-    gulp.watch('./app/**/*.html', function() {
+    watch('./app/**/*.html', function() {
         browserSync.reload();
     });
 
-    gulp.watch('./app/assets/styles/**/*.scss', ['cssInject']);
+    watch('./app/assets/styles/**/*.scss', function() {
+        gulp.start('cssInject');
+    });
 
-    gulp.watch('./app/assets/scripts/**/*.js', ['scriptsRefresh']);
+    watch('./app/assets/scripts/**/*.js', function() {
+        gulp.start('scriptsRefresh');
+    });
 
-    gulp.watch(['./app/assets/fonts/**/*'], ['copyFontsTemp']);
+    watch(['app/assets/fonts/**/*'], function() {
+        gulp.start('copyFontsTemp');
+    });
 
-    gulp.watch(['./app/assets/images/**/*'], ['copyImagesTemp']);
+    watch(['app/assets/images/**/*'], function() {
+        gulp.start('copyImagesTemp');
+    });
 
 });
 
@@ -79,7 +88,7 @@ gulp.task("scriptsRefresh", ["scripts"], function() {
 });
 
 // =======================================================================================
-// Delete dist folder
+// Delete temp folder
 // =======================================================================================
 gulp.task('deleteTempFolder', function() {
     return del('./app/temp');
